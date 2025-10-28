@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لوحة الإدارة — نشر المجلات</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Small admin-specific tweaks */
+    .admin-container{max-width:900px;margin:2rem auto;padding:1.5rem;background:var(--card);border-radius:12px;box-shadow:var(--shadow-sm)}
+    label{display:block;margin:0.6rem 0 0.25rem;font-weight:600;color:var(--text)}
+    input[type="text"], input[type="email"], textarea, select{width:100%;padding:0.6rem;border:1px solid #e6e9ee;border-radius:8px;font-size:1rem}
+    textarea{min-height:120px}
+    .row{display:flex;gap:1rem}
+    .col{flex:1}
+    .inline{display:inline-block}
+    .btn{display:inline-block;padding:0.6rem 1rem;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--accent);color:#fff}
+    .btn.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+    .preview-card{margin-top:1rem;padding:1rem;border-radius:10px;background:#f9fafb;border:1px solid #eef2f7}
+    .preview-row{display:flex;gap:1rem;align-items:center}
+    .preview-row img{width:84px;height:84px;object-fit:cover;border-radius:8px}
+    .small-note{color:var(--muted);font-size:0.95rem}
+    .actions{margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap}
+    pre.json-out{max-height:240px;overflow:auto;background:#0b1220;color:#dbeafe;padding:1rem;border-radius:8px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-top">
+      <div class="brand">
+        <div class="logo">هـ</div>
+        <div>
+          <h1>لوحة الإدارة</h1>
+          <div class="subtitle">أداة مساعدة لإنشاء بيانات المجلات وتجربة البطاقات</div>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="journals-list.html">قائمة المجلات</a>
+        <a href="admin.html" class="active">لوحة الإدارة</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="admin-container">
+      <h2>إنشاء / تحرير مجلة جديدة</h2>
+      <p class="small-note">املأ الحقول أدناه ثم اضغط "معاينة" لمشاهدة بطاقة المجلة، أو "تصدير JSON" لتحميل ملف يمكنك استخدامه لاحقاً.</p>
+
+      <form id="adminForm" onsubmit="return false;">
+        <label>عنوان المجلة (عربي)</label>
+        <input type="text" id="title_ar" placeholder="مثلاً: دراسات نفسية وتربوية" />
+
+        <label>عنوان المجلة (إنجليزي - اختياري)</label>
+        <input type="text" id="title_en" placeholder="e.g. Psychological & Educational Studies" />
+
+        <div class="row">
+          <div class="col">
+            <label>الكلية / المؤسسة</label>
+            <input type="text" id="faculty" placeholder="مثلاً: Université Kasdi Merbah - Ouargla" />
+          </div>
+          <div class="col">
+            <label>E-ISSN / ISSN</label>
+            <input type="text" id="issn" placeholder="مثلاً: 2588-2538" />
+          </div>
+        </div>
+
+        <label>وصف مختصر</label>
+        <textarea id="description" placeholder="وصف موجز للمجلة"></textarea>
+
+        <div class="row" style="align-items:center;margin-top:0.5rem">
+          <div class="col">
+            <label>رابط خارجي (مثل صفحة ASJP أو الموقع الرسمي)</label>
+            <input type="text" id="external" placeholder="https://..." />
+          </div>
+          <div style="width:180px">
+            <label>شعار المجلة (صورة)</label>
+            <input type="file" id="logoInput" accept="image/*" />
+            <div class="small-note">ستُضمّن الصورة بصيغة Base64 في JSON للتجربة المحلية.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="previewBtn">معاينة</button>
+          <button class="btn ghost" id="exportBtn">تصدير JSON</button>
+          <button class="btn" id="clearBtn">مسح الحقول</button>
+        </div>
+
+      </form>
+
+      <div id="preview" class="preview-card" style="display:none">
+        <h3>معاينة البطاقة</h3>
+        <div class="preview-row">
+          <img id="previewLogo" src="" alt="شعار" style="display:none" />
+          <div>
+            <div id="previewTitle" style="font-weight:700;color:var(--accent)"></div>
+            <div id="previewFaculty" class="small-note"></div>
+            <div id="previewIssn" class="small-note"></div>
+            <div id="previewDesc" style="margin-top:0.5rem;color:var(--muted)"></div>
+            <div id="previewExternal" style="margin-top:0.5rem"></div>
+          </div>
+        </div>
+        <h4 style="margin-top:1rem">JSON الناتج</h4>
+        <pre id="jsonOut" class="json-out" style="display:none"></pre>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="copyright">حقوق النشر © ٢٠٢٥ هشام. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple admin JS: preview and export JSON (includes base64 image if uploaded)
+    const form = document.getElementById('adminForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const preview = document.getElementById('preview');
+    const previewLogo = document.getElementById('previewLogo');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewFaculty = document.getElementById('previewFaculty');
+    const previewIssn = document.getElementById('previewIssn');
+    const previewDesc = document.getElementById('previewDesc');
+    const previewExternal = document.getElementById('previewExternal');
+    const jsonOut = document.getElementById('jsonOut');
+    const logoInput = document.getElementById('logoInput');
+
+    let logoData = null;
+
+    logoInput.addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (!f) { logoData = null; previewLogo.style.display='none'; return }
+      const reader = new FileReader();
+      reader.onload = () => {
+        logoData = reader.result; // base64 data URL
+        previewLogo.src = logoData;
+        previewLogo.style.display = 'block';
+      };
+      reader.readAsDataURL(f);
+    });
+
+    function collectData(){
+      return {
+        title_ar: document.getElementById('title_ar').value.trim(),
+        title_en: document.getElementById('title_en').value.trim(),
+        faculty: document.getElementById('faculty').value.trim(),
+        issn: document.getElementById('issn').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        external_link: document.getElementById('external').value.trim(),
+        logo: logoData // may be null
+      };
+    }
+
+    function showPreview(data){
+      previewTitle.textContent = data.title_ar || data.title_en || '—';
+      previewFaculty.textContent = data.faculty || '';
+      previewIssn.textContent = data.issn ? ('ISSN: ' + data.issn) : '';
+      previewDesc.textContent = data.description || '';
+      if (data.external_link){
+        previewExternal.innerHTML = '<a href="'+escapeHtml(data.external_link)+'" target="_blank">رابط خارجي</a>';
+      } else previewExternal.innerHTML = '';
+      if (data.logo){ previewLogo.src = data.logo; previewLogo.style.display='block'; } else previewLogo.style.display='none';
+      jsonOut.style.display='block';
+      jsonOut.textContent = JSON.stringify(data, null, 2);
+      preview.style.display = 'block';
+    }
+
+    function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+    previewBtn.addEventListener('click', () => {
+      const data = collectData();
+      showPreview(data);
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const data = collectData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const name = (data.title_ar || 'journal').replace(/\s+/g,'_');
+      a.href = url;
+      a.download = name + '.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    clearBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      ['title_ar','title_en','faculty','issn','description','external'].forEach(id=>document.getElementById(id).value='');
+      logoInput.value = '';
+      logoData = null;
+      preview.style.display='none';
+      jsonOut.style.display='none';
+    });
+  </script>
+</body>
+</html>
