@@ -1,0 +1,22 @@
+[
+  {
+    "id": "mostaganem-legal",
+    "title_ar": "المجلة القانونية لمستغانم",
+    "title_en": "Mostaganem Legal Journal (example)",
+    "faculty": "جامعة مستغانم للحقوق والعلوم السياسية",
+    "issn": "",
+    "description": "مثال لبطاقة مجلة قانونية من جامعة مستغانم.",
+    "external_link": "",
+    "logo": ""
+  },
+  {
+    "id": "psych-educ-studies",
+    "title_ar": "دراسات نفسية وتربوية",
+    "title_en": "Psychological & Educational Studies",
+    "faculty": "Université Kasdi Merbah — Ouargla",
+    "issn": "E-ISSN: 2588-2538",
+    "description": "دورية نصف سنوية تغطي البحوث في علم النفس والتربية.",
+    "external_link": "https://asjp.cerist.dz/en/PresentationRevue/117",
+    "logo": "static/images/asjp-logo.jpg"
+  }
+]

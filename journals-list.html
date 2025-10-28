@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>قائمة المجلات - مجلة هشام</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-top">
+      <div class="brand">
+        <div class="logo">هـ</div>
+        <div>
+          <h1>مجلة هشام</h1>
+          <div class="subtitle">موقع يعرض مجلات "مجلة هشام" ومُنظّم على غرار هيكلية صفحات المجلات الأكاديمية</div>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="#" class="active">قائمة المجلات</a>
+        <a href="index.html#about">عنّي</a>
+        <a href="index.html#contact">اتصل بنا</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="journals-list">
+      <h2>قائمة المجلات</h2>
+      
+      <div id="journalsGrid" class="journals-grid">
+        <!-- سيتم تحميل محتوى المجلات ديناميكياً من data/journals.json -->
+      </div>
+
+      <script>
+        // Attempt to load journals from data/journals.json. If fetch fails, insert a fallback notice.
+        async function loadJournals(){
+          const grid = document.getElementById('journalsGrid');
+          try{
+            const res = await fetch('data/journals.json', {cache: 'no-store'});
+            if(!res.ok) throw new Error('no-data');
+            const items = await res.json();
+            if(!Array.isArray(items) || items.length===0){
+              grid.innerHTML = '<p class="small-note">لا توجد مجلات حالياً في ملف البيانات (data/journals.json).</p>';
+              return;
+            }
+            grid.innerHTML = items.map(j=>{
+              const logo = j.logo ? ('<img src="'+j.logo+'" alt="شعار" class="journal-logo" />') : '';
+              const external = j.external_link ? ('<a href="'+j.external_link+'" target="_blank" class="external-link">رابط خارجي</a>') : '';
+              const browse = j.id ? ('<a href="/journals/'+j.id+'/index.html" class="journal-link">تصفح المجلة</a>') : '';
+              return `
+                <article class="journal-card">
+                  <div class="journal-header">
+                    ${logo}
+                    <h3>${escapeHtml(j.title_ar || j.title_en || '—')}</h3>
+                    <p class="journal-faculty">${escapeHtml(j.faculty||'')}</p>
+                  </div>
+                  <div class="journal-meta">
+                    <p>${escapeHtml(j.issn||'')}</p>
+                    <p>${escapeHtml(j.description||'')}</p>
+                    <div class="journal-links">${browse}${external}</div>
+                  </div>
+                </article>`;
+            }).join('\n');
+          }catch(e){
+            // fallback: show message and leave empty grid for manual (static) content
+            grid.innerHTML = '<p class="small-note">تعذر تحميل بيانات المجلات من data/journals.json — يتم عرض المحتوى الثابت إن وجد.</p>';
+            console.warn('Could not load data/journals.json', e);
+          }
+        }
+        function escapeHtml(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        loadJournals();
+      </script>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="copyright">حقوق النشر © ٢٠٢٥ هشام. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+</body>
+</html>

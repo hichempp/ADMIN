@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0%" stop-color="#0ea5a4"/>
+      <stop offset="100%" stop-color="#087f7d"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" rx="24" fill="url(#g)" />
+  <g fill="#fff" font-family="Cairo, Arial, sans-serif" text-anchor="middle">
+    <text x="50%" y="44%" font-size="40" font-weight="700">دراسات</text>
+    <text x="50%" y="66%" font-size="18" font-weight="600">نفسية وتربوية</text>
+  </g>
+</svg>

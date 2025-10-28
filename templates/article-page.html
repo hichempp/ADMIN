@@ -1,0 +1,34 @@
+<!-- article-page.html
+     Template for an article detail page (embed PDF or link to download)
+     Placeholders: {{ARTICLE_TITLE}}, {{AUTHORS}}, {{ABSTRACT}}, {{PDF_URL}}
+-->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ARTICLE_TITLE}} — مجلة هشام</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header"><div class="container site-top"><div class="brand"><div class="logo">هـ</div><h1>مجلة هشام</h1></div></div></header>
+  <main class="container">
+    <article class="faculty">
+      <h2>{{ARTICLE_TITLE}}</h2>
+      <p class="meta">{{AUTHORS}}</p>
+      <h3>الملخّص</h3>
+      <p>{{ABSTRACT}}</p>
+
+      <h3>ملف المقال</h3>
+      <p><a href="{{PDF_URL}}">تحميل PDF</a></p>
+      <div style="margin-top:1rem">
+        <!-- Optional embed: browser may block local file embeds; better to host PDF in static/ and link -->
+        <iframe src="{{PDF_URL}}" style="width:100%;height:640px;border:0" title="مستند PDF"></iframe>
+      </div>
+
+      <p><a href="/index.html">العودة للرئيسية</a></p>
+    </article>
+  </main>
+  <footer>© 2025 هشام — جميع الحقوق محفوظة</footer>
+</body>
+</html>

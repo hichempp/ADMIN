@@ -1,0 +1,36 @@
+<!-- journal-page.html
+     Template for a journal's main page. Replace placeholders:
+     {{JOURNAL_TITLE}}, {{JOURNAL_DESCRIPTION}}, {{EDITOR}}, {{ISSN}}, and add actual issue links.
+-->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{JOURNAL_TITLE}} — مجلة هشام</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header"><div class="container site-top">
+    <div class="brand"><div class="logo">هـ</div><h1>مجلة هشام</h1></div>
+  </div></header>
+
+  <main class="container">
+    <article class="faculty">
+      <h2>{{JOURNAL_TITLE}}</h2>
+      <p class="meta">{{JOURNAL_DESCRIPTION}}</p>
+      <p class="meta"><strong>رئيس التحرير:</strong> {{EDITOR}} &nbsp;|&nbsp; <strong>ISSN:</strong> {{ISSN}}</p>
+
+      <h3>الأعداد</h3>
+      <ul class="journals">
+        <!-- Repeat this line for each issue -->
+        <li><a href="{{ISSUE_URL}}">العدد {{ISSUE_NUMBER}} — {{ISSUE_YEAR}}</a></li>
+      </ul>
+
+      <p><a href="/index.html">عودة إلى الصفحة الرئيسية</a></p>
+    </article>
+  </main>
+
+  <footer>© 2025 هشام — جميع الحقوق محفوظة</footer>
+</body>
+</html>
